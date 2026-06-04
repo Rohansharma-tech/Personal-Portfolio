@@ -7,7 +7,7 @@ export default function Education() {
   const [education, setEducation] = useState([])
 
   useEffect(() => {
-    getEducation().then(r => setEducation(r.data.results ?? r.data)).catch(() => {})
+    getEducation().then(r => { const d = r.data?.results ?? r.data; setEducation(Array.isArray(d) ? d : []) }).catch(() => {})
   }, [])
 
   return (

@@ -42,7 +42,7 @@ export default function About() {
 
   useEffect(() => {
     getProfile().then(r => setProfile(r.data)).catch(() => {})
-    getSkills().then(r => setSkills(r.data.results ?? r.data)).catch(() => {})
+    getSkills().then(r => { const d = r.data?.results ?? r.data; setSkills(Array.isArray(d) ? d : []) }).catch(() => {})
   }, [])
 
   useEffect(() => {

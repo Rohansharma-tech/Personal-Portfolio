@@ -15,8 +15,8 @@ export default function Home() {
 
   useEffect(() => {
     getProfile().then(r => setProfile(r.data)).catch(() => {})
-    getProjects({ featured: 'true' }).then(r => setProjects((r.data.results ?? r.data).slice(0, 3))).catch(() => {})
-    getSkills().then(r => setSkills((r.data.results ?? r.data).slice(0, 14))).catch(() => {})
+    getProjects({ featured: 'true' }).then(r => { const d = r.data?.results ?? r.data; setProjects(Array.isArray(d) ? d.slice(0, 3) : []) }).catch(() => {})
+    getSkills().then(r => { const d = r.data?.results ?? r.data; setSkills(Array.isArray(d) ? d.slice(0, 14) : []) }).catch(() => {})
   }, [])
 
   const socials = [

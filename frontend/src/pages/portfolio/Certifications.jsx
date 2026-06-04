@@ -12,7 +12,7 @@ export default function Certifications() {
   const [filter,  setFilter]  = useState('all')
 
   useEffect(() => {
-    getCertifications().then(r => setCerts(r.data.results ?? r.data)).catch(() => {})
+    getCertifications().then(r => { const d = r.data?.results ?? r.data; setCerts(Array.isArray(d) ? d : []) }).catch(() => {})
   }, [])
 
   const categories = ['all', ...new Set(certs.map(c => c.category).filter(Boolean))]

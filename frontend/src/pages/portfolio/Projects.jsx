@@ -16,7 +16,7 @@ export default function Projects() {
     setLoading(true)
     const params = filter !== 'all' ? { status: filter } : {}
     getProjects(params)
-      .then(r => { setProjects(r.data.results ?? r.data); setLoading(false) })
+      .then(r => { const d = r.data?.results ?? r.data; setProjects(Array.isArray(d) ? d : []); setLoading(false) })
       .catch(()  => setLoading(false))
   }, [filter])
 
