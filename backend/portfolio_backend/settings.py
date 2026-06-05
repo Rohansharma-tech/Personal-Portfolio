@@ -134,3 +134,26 @@ CORS_ALLOW_ALL_ORIGINS = DEBUG  # allow all in dev
 CSRF_TRUSTED_ORIGINS = _allowed_origins
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- Logging (shows errors in Railway logs) ---
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
