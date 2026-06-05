@@ -144,11 +144,16 @@ _allowed_origins = [
     if o.strip()
 ]
 CORS_ALLOWED_ORIGINS = _allowed_origins
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://personal-portfolio.*\.vercel\.app$",
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # allow all in dev
 
-# CSRF must also trust the frontend origin in production
-CSRF_TRUSTED_ORIGINS = _allowed_origins
+# CSRF must also trust the frontend origin in production (allowing subdomains for Vercel previews)
+CSRF_TRUSTED_ORIGINS = _allowed_origins + [
+    'https://*.vercel.app',
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
