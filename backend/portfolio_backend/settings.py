@@ -119,6 +119,10 @@ STORAGES = {
     },
 }
 
+# Keep this for django-cloudinary-storage 0.3.0 compatibility
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
