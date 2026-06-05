@@ -8,7 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-key-change-in-production')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.railway.internal,healthcheck.railway.app').split(',')
+_allowed_hosts = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+# Always include Railway internal hosts (required even when ALLOWED_HOSTS env var is set)
+ALLOWED_HOSTS = _allowed_hosts + ['.railway.app', 'healthcheck.railway.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
