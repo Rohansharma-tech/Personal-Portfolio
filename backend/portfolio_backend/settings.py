@@ -118,6 +118,10 @@ STORAGES = {
     },
 }
 
+# Keep this for django-cloudinary-storage compatibility during collectstatic
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
