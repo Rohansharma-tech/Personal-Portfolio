@@ -6,21 +6,21 @@ import { getProjects } from '../../services/api'
 const STATUS_FILTERS = ['all', 'completed', 'in_progress', 'planned', 'archived']
 
 const STATUS_META = {
-  completed:   { bg: 'rgba(16,185,129,0.12)', text: '#34d399', dot: '#10b981', label: 'Completed',   Icon: FiCheckCircle },
+  completed: { bg: 'rgba(16,185,129,0.12)', text: '#34d399', dot: '#10b981', label: 'Completed', Icon: FiCheckCircle },
   in_progress: { bg: 'rgba(59,130,246,0.12)', text: '#60a5fa', dot: '#3b82f6', label: 'In Progress', Icon: FiClock },
-  planned:     { bg: 'rgba(251,191,36,0.12)', text: '#fbbf24', dot: '#f59e0b', label: 'Planned',     Icon: FiCalendar },
-  archived:    { bg: 'rgba(107,114,128,0.12)',text: '#9ca3af', dot: '#6b7280', label: 'Archived',    Icon: FiArchive },
+  planned: { bg: 'rgba(251,191,36,0.12)', text: '#fbbf24', dot: '#f59e0b', label: 'Planned', Icon: FiCalendar },
+  archived: { bg: 'rgba(107,114,128,0.12)', text: '#9ca3af', dot: '#6b7280', label: 'Archived', Icon: FiArchive },
 }
 
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
-const fadeUp  = { hidden: { opacity: 0, y: 28 }, show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.22,1,0.36,1] } } }
+const fadeUp = { hidden: { opacity: 0, y: 28 }, show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.22, 1, 0.36, 1] } } }
 
 /* ── Modal overlay animation ── */
 const overlayAnim = { hidden: { opacity: 0 }, show: { opacity: 1 }, exit: { opacity: 0 } }
-const drawerAnim  = {
+const drawerAnim = {
   hidden: { opacity: 0, y: 40, scale: 0.97 },
-  show:   { opacity: 1, y: 0,  scale: 1,    transition: { duration: 0.38, ease: [0.22,1,0.36,1] } },
-  exit:   { opacity: 0, y: 24, scale: 0.97, transition: { duration: 0.22, ease: [0.4,0,1,1] } },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] } },
+  exit: { opacity: 0, y: 24, scale: 0.97, transition: { duration: 0.22, ease: [0.4, 0, 1, 1] } },
 }
 
 /* ── Project Detail Modal ── */
@@ -61,6 +61,7 @@ function ProjectModal({ project: p, onClose }) {
             width: '100%', maxWidth: 680,
             maxHeight: '90vh',
             overflowY: 'auto',
+            overflowX: 'hidden',
             background: 'var(--bg-secondary, #111)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 20,
@@ -68,30 +69,49 @@ function ProjectModal({ project: p, onClose }) {
             position: 'relative',
           }}
         >
-          {/* Close button */}
+          {/* Close button — fixed inside modal, no float, no sticky */}
           <button
             onClick={onClose}
             style={{
-              position: 'sticky', top: 16, float: 'right',
-              marginRight: 16, marginTop: 16,
-              zIndex: 10,
+              position: 'absolute', top: 14, right: 14,
+              zIndex: 20,
               width: 36, height: 36, borderRadius: '50%',
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              color: 'var(--text-secondary, #aaa)',
+              background: 'rgba(0,0,0,0.45)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              color: '#fff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', transition: 'background 0.2s',
+              flexShrink: 0,
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.7)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.45)'}
           >
             <FiX size={16} />
           </button>
 
           {/* Thumbnail */}
-          <div style={{ height: 240, overflow: 'hidden', borderRadius: '20px 20px 0 0', background: 'var(--bg-primary)', flexShrink: 0, position: 'relative' }}>
+          <div style={{
+            width: '100%',
+            height: 260,
+            overflow: 'hidden',
+            borderRadius: '20px 20px 0 0',
+            background: 'var(--bg-primary)',
+            flexShrink: 0,
+            position: 'relative',
+            display: 'block',
+          }}>
             {p.screenshots?.[0]?.image_url
-              ? <img src={p.screenshots[0].image_url} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ? <img
+                src={p.screenshots[0].image_url}
+                alt={p.title}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center top',
+                }}
+              />
               : (
                 <div style={{
                   width: '100%', height: '100%',
@@ -103,7 +123,11 @@ function ProjectModal({ project: p, onClose }) {
               )
             }
             {/* gradient fade at bottom of thumb */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(transparent, var(--bg-secondary, #111))' }} />
+            <div style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0, height: 100,
+              background: 'linear-gradient(to bottom, transparent, var(--bg-secondary, #111))',
+              pointerEvents: 'none',
+            }} />
           </div>
 
           {/* Content */}
@@ -220,10 +244,10 @@ function ProjectModal({ project: p, onClose }) {
 
 /* ── Main Projects Page ── */
 export default function Projects() {
-  const [projects,  setProjects]  = useState([])
-  const [filter,    setFilter]    = useState('all')
-  const [loading,   setLoading]   = useState(true)
-  const [selected,  setSelected]  = useState(null)
+  const [projects, setProjects] = useState([])
+  const [filter, setFilter] = useState('all')
+  const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState(null)
 
   useEffect(() => {
     setLoading(true)
@@ -276,9 +300,31 @@ export default function Projects() {
         }
         .proj-card:hover .proj-thumb-img { transform: scale(1.06); }
 
-        .proj-thumb { height: 188px; overflow: hidden; background: var(--bg-primary); position: relative; flex-shrink: 0; }
-        .proj-thumb-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.55s cubic-bezier(0.22,1,0.36,1); display: block; }
-        .proj-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.07) 100%); }
+        .proj-thumb {
+          width: 100%;
+          height: 200px;
+          overflow: hidden;
+          background: var(--bg-primary);
+          position: relative;
+          flex-shrink: 0;
+          display: block;
+        }
+        .proj-thumb-img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
+          transition: transform 0.55s cubic-bezier(0.22,1,0.36,1);
+        }
+        .proj-thumb-placeholder {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.07) 100%);
+        }
 
         /* "Click to expand" hint on hover */
         .proj-hover-hint {
