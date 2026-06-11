@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { getProfile, getSkills } from '../../services/api'
+import { usePageSEO } from '../../hooks/usePageSEO'
 
 const fadeUp  = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } }
@@ -35,6 +36,11 @@ function SkillBar({ skill, animate }) {
 }
 
 export default function About() {
+  usePageSEO({
+    title: 'About',
+    description: 'Learn about Rohan Sharma — a backend-focused Full Stack Developer passionate about building scalable systems with Django, React, and PostgreSQL.',
+  })
+
   const [profile, setProfile] = useState(null)
   const [skills,  setSkills]  = useState([])
   const [animate, setAnimate] = useState(false)

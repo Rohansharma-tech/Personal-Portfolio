@@ -4,11 +4,17 @@ import { FiMail, FiPhone, FiMapPin, FiSend, FiGithub, FiLinkedin } from 'react-i
 import { SiLeetcode } from 'react-icons/si'
 import toast from 'react-hot-toast'
 import { sendContact, getProfile } from '../../services/api'
+import { usePageSEO } from '../../hooks/usePageSEO'
 
 const fadeUp  = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } }
 
 export default function Contact() {
+  usePageSEO({
+    title: 'Contact',
+    description: 'Get in touch with Rohan Sharma. Available for freelance work, collaborations, and full-time opportunities. Based in India.',
+  })
+
   const [form,    setForm]    = useState({ name: '', email: '', subject: '', message: '' })
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState(null)
@@ -95,23 +101,23 @@ export default function Contact() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div className="form-group">
-                    <label className="form-label">Name <span style={{ color: 'var(--danger)' }}>*</span></label>
-                    <input name="name" value={form.name} onChange={handleChange} className="form-input" placeholder="Your name" />
+                    <label htmlFor="contact-name" className="form-label">Name <span style={{ color: 'var(--danger)' }}>*</span></label>
+                    <input id="contact-name" name="name" value={form.name} onChange={handleChange} className="form-input" placeholder="Your name" autoComplete="name" />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Email <span style={{ color: 'var(--danger)' }}>*</span></label>
-                    <input name="email" type="email" value={form.email} onChange={handleChange} className="form-input" placeholder="your@email.com" />
+                    <label htmlFor="contact-email" className="form-label">Email <span style={{ color: 'var(--danger)' }}>*</span></label>
+                    <input id="contact-email" name="email" type="email" value={form.email} onChange={handleChange} className="form-input" placeholder="your@email.com" autoComplete="email" />
                   </div>
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Subject</label>
-                  <input name="subject" value={form.subject} onChange={handleChange} className="form-input" placeholder="What's this about?" />
+                  <label htmlFor="contact-subject" className="form-label">Subject</label>
+                  <input id="contact-subject" name="subject" value={form.subject} onChange={handleChange} className="form-input" placeholder="What's this about?" autoComplete="off" />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Message <span style={{ color: 'var(--danger)' }}>*</span></label>
-                  <textarea name="message" value={form.message} onChange={handleChange}
+                  <label htmlFor="contact-message" className="form-label">Message <span style={{ color: 'var(--danger)' }}>*</span></label>
+                  <textarea id="contact-message" name="message" value={form.message} onChange={handleChange}
                     className="form-input" rows={5} placeholder="Tell me about your project or idea…" />
                 </div>
 

@@ -2,11 +2,17 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiExternalLink, FiCalendar, FiAward, FiX } from 'react-icons/fi'
 import { getCertifications } from '../../services/api'
+import { usePageSEO } from '../../hooks/usePageSEO'
 
 const fadeUp  = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
 export default function Certifications() {
+  usePageSEO({
+    title: 'Certifications',
+    description: 'Professional certifications and credentials earned by Rohan Sharma in Cloud, Web Development, Backend Engineering, and more.',
+  })
+
   const [certs,   setCerts]   = useState([])
   const [preview, setPreview] = useState(null)
   const [filter,  setFilter]  = useState('all')

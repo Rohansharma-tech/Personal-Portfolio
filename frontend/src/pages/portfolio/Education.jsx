@@ -2,8 +2,14 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiMapPin, FiCalendar, FiAward } from 'react-icons/fi'
 import { getEducation } from '../../services/api'
+import { usePageSEO } from '../../hooks/usePageSEO'
 
 export default function Education() {
+  usePageSEO({
+    title: 'Education',
+    description: 'Rohan Sharma’s educational background — B.Tech in Computer Science & Engineering. Academic journey, institutions, and qualifications.',
+  })
+
   const [education, setEducation] = useState([])
 
   useEffect(() => {

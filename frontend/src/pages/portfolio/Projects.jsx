@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiGithub, FiExternalLink, FiX, FiCheckCircle, FiClock, FiArchive, FiCalendar } from 'react-icons/fi'
 import { getProjects } from '../../services/api'
+import { usePageSEO } from '../../hooks/usePageSEO'
 
 const STATUS_FILTERS = ['all', 'completed', 'in_progress', 'planned', 'archived']
 
@@ -244,6 +245,11 @@ function ProjectModal({ project: p, onClose }) {
 
 /* ── Main Projects Page ── */
 export default function Projects() {
+  usePageSEO({
+    title: 'Projects',
+    description: 'Browse Rohan Sharma’s portfolio of projects — full-stack web apps, REST APIs, and backend systems built with Django, React, and PostgreSQL.',
+  })
+
   const [projects, setProjects] = useState([])
   const [filter, setFilter] = useState('all')
   const [loading, setLoading] = useState(true)

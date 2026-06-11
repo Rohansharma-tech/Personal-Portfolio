@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://personal-portfolio-omega-tan.vercel.app/sitemap.xml
+
+# Block admin routes from indexing
+Disallow: /admin/
+Disallow: /admin/login

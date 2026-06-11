@@ -4,11 +4,17 @@ import { Link } from 'react-router-dom'
 import { FiGithub, FiLinkedin, FiMail, FiDownload, FiArrowRight, FiExternalLink, FiCode } from 'react-icons/fi'
 import { SiLeetcode } from 'react-icons/si'
 import { getProfile, getProjects, getSkills } from '../../services/api'
+import { usePageSEO } from '../../hooks/usePageSEO'
 
 const fadeUp   = { hidden: { opacity: 0, y: 28 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }
 const stagger  = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } }
 
 export default function Home() {
+  usePageSEO({
+    title: 'Home',
+    description: 'Rohan Sharma — Full Stack Developer based in India. Specializing in Django, React, and PostgreSQL. Open to work and exciting collaborations.',
+  })
+
   const [profile,  setProfile]  = useState(null)
   const [projects, setProjects] = useState([])
   const [skills,   setSkills]   = useState([])

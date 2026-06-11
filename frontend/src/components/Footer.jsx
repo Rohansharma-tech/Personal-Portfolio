@@ -1,10 +1,24 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FiGithub, FiLinkedin, FiMail, FiArrowUp } from 'react-icons/fi'
 import { SiLeetcode } from 'react-icons/si'
+import { getProfile } from '../services/api'
 
 export default function Footer() {
   const year = new Date().getFullYear()
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+  const [profile, setProfile] = useState(null)
+
+  useEffect(() => {
+    getProfile().then(r => setProfile(r.data)).catch(() => {})
+  }, [])
+
+  const socials = [
+    { icon: FiGithub,   href: profile?.github_url,   label: 'GitHub' },
+    { icon: FiLinkedin, href: profile?.linkedin_url,  label: 'LinkedIn' },
+    { icon: SiLeetcode, href: profile?.leetcode_url,  label: 'LeetCode' },
+    { icon: FiMail,     href: profile?.email ? `mailto:${profile.email}` : null, label: 'Email' },
+  ].filter(s => s.href && s.href !== 'mailto:undefined' && s.href !== 'mailto:')
 
   return (
     <footer style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--border)' }}>
@@ -14,10 +28,12 @@ export default function Footer() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.75rem' }}>
               <div className="nav-logo-icon">⚡</div>
-              <span className="gradient-text" style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '1.1rem' }}>Portfolio</span>
+              <span className="gradient-text" style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '1.1rem' }}>
+                {profile?.name || 'Portfolio'}
+              </span>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: '220px' }}>
-              Building modern web experiences with passion and precision.
+              {profile?.title || 'Full Stack Developer'} — building modern web experiences with passion and precision.
             </p>
           </div>
 
@@ -45,12 +61,7 @@ export default function Footer() {
               Connect
             </h4>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              {[
-                { icon: FiGithub, href: 'https://github.com', label: 'GitHub' },
-                { icon: FiLinkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-                { icon: SiLeetcode, href: 'https://leetcode.com', label: 'LeetCode' },
-                { icon: FiMail, href: 'mailto:you@email.com', label: 'Email' },
-              ].map(({ icon: Icon, href, label }) => (
+              {socials.map(({ icon: Icon, href, label }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
                   className="btn-icon" aria-label={label} title={label}>
                   <Icon size={17} />
@@ -63,7 +74,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.84rem' }}>
-            © {year} Portfolio · Built with React & Django ·{' '}
+            © {year} {profile?.name || 'Rohan Sharma'} · Built with React &amp; Django ·{' '}
             <Link to="/admin/login" style={{ color: 'var(--text-muted)', transition: 'color .2s' }}
               onMouseEnter={e => e.currentTarget.style.color = 'var(--primary-light)'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
