@@ -10,3 +10,4 @@ pillow==12.2.0
 dj-database-url==3.1.2
 gunicorn==22.0.0
 whitenoise==6.9.0
+sentry-sdk[django]==2.30.0

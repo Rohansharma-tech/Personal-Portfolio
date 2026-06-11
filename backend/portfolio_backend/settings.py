@@ -2,11 +2,44 @@ from pathlib import Path
 from decouple import config
 import dj_database_url
 from datetime import timedelta
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
+import logging
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-key-change-in-production')
 DEBUG = config('DEBUG', default=True, cast=bool)
+
+# ── Sentry (Production Observability) ────────────────────────────────────────
+# Activates only when SENTRY_DSN is set in environment variables.
+# Safe to omit in local dev and CI — no errors are sent without a DSN.
+SENTRY_DSN = config('SENTRY_DSN', default='')
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(
+                transaction_style='url',   # group transactions by URL pattern
+                middleware_spans=True,     # trace each middleware
+                signals_spans=True,        # trace Django signals
+                cache_spans=True,          # trace cache ops
+            ),
+            LoggingIntegration(
+                level=logging.WARNING,     # capture WARNING and above as breadcrumbs
+                event_level=logging.ERROR, # send ERROR and above as Sentry events
+            ),
+        ],
+        # Capture 100% of transactions in dev, 10% in production
+        traces_sample_rate=1.0 if DEBUG else 0.1,
+        # Profile 20% of sampled transactions
+        profiles_sample_rate=0.2,
+        # Attach request data (user email, IP) to error events
+        send_default_pii=True,
+        environment='development' if DEBUG else 'production',
+        release=config('APP_VERSION', default='1.0.0'),
+    )
 
 _allowed_hosts = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 # Always include Railway internal hosts (required even when ALLOWED_HOSTS env var is set)

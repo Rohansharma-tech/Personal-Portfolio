@@ -46,6 +46,7 @@ jobs:
           CLOUDINARY_API_SECRET: "test_secret"
           ALLOWED_HOSTS: "localhost,127.0.0.1"
           CORS_ALLOWED_ORIGINS: "http://localhost:5173"
+          SENTRY_DSN: ""                 # intentionally empty — no error reporting in CI
         run: python manage.py test api --verbosity=2
 
   # ─────────────────────────────────────────────────────────────────────────────
