@@ -178,6 +178,15 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    # ── Rate Limiting ────────────────────────────────────────────────────
+    # Throttle rates for the contact form (keyed by client IP address).
+    # contact_burst : 2/min  — blocks rapid flooding / double-submits
+    # contact_sustain: 5/hour — blocks sustained spam campaigns
+    # State is stored in Django's cache (LocMemCache by default).
+    'DEFAULT_THROTTLE_RATES': {
+        'contact_burst':   '2/min',
+        'contact_sustain': '5/hour',
+    },
 }
 
 # --- JWT ---

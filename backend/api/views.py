@@ -4,13 +4,24 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.decorators import action
+from rest_framework.exceptions import Throttled
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 from .models import Profile, Skill, Education, Certification, Project, ProjectScreenshot, ContactMessage
 from .serializers import (
     ProfileSerializer, SkillSerializer, EducationSerializer,
     CertificationSerializer, ProjectSerializer, ProjectScreenshotSerializer,
     ContactMessageSerializer, ContactMessageCreateSerializer, DashboardStatsSerializer
 )
+from .throttles import ContactBurstThrottle, ContactSustainThrottle
+
+
+class _ThrottleResponse(Exception):
+    """Sentinel used by ContactCreateView.throttled() to short-circuit DRF
+    and return a pre-built JsonResponse with custom 429 body."""
+    def __init__(self, response):
+        self.response = response
+
 
 
 # ─── Profile ────────────────────────────────────────────────────────────────
@@ -150,15 +161,52 @@ class ProjectScreenshotCreateView(APIView):
 # ─── Contact ─────────────────────────────────────────────────────────────────
 
 class ContactCreateView(generics.CreateAPIView):
+    """
+    POST /api/contact/
+
+    Rate limits (per IP address):
+      - Burst  : 2 requests / minute  — prevents double-submits & rapid flooding
+      - Sustain: 5 requests / hour    — prevents sustained spam campaigns
+
+    On limit hit → HTTP 429 with JSON body:
+      { "error": "rate_limited", "message": "...", "retry_after": <seconds> }
+    """
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageCreateSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [ContactBurstThrottle, ContactSustainThrottle]
+
+    def throttled(self, request, wait):
+        """Return a rich 429 body the frontend can use to show a countdown."""
+        wait_seconds = int(wait) + 1  # round up so UI countdown is accurate
+        if wait_seconds <= 60:
+            message = f'Too many requests. Please wait {wait_seconds} seconds before trying again.'
+        else:
+            minutes = round(wait_seconds / 60)
+            message = f'Too many messages sent. Please wait {minutes} minute{"s" if minutes > 1 else ""} before trying again.'
+
+        response = JsonResponse({
+            'error': 'rate_limited',
+            'message': message,
+            'retry_after': wait_seconds,
+        }, status=429)
+        response['Retry-After'] = str(wait_seconds)
+        raise _ThrottleResponse(response)
+
+    def handle_exception(self, exc):
+        """Intercept our sentinel and return its pre-built response."""
+        if isinstance(exc, _ThrottleResponse):
+            return exc.response
+        return super().handle_exception(exc)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'success': True, 'message': 'Message sent successfully!'}, status=status.HTTP_201_CREATED)
+            return Response(
+                {'success': True, 'message': 'Message sent successfully!'},
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
