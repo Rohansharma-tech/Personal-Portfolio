@@ -79,7 +79,7 @@ jobs:
       - name: Build (Vite production)
         run: npm run build
         env:
-          VITE_API_URL: "https://personal-portfolio-production-752d.up.railway.app"
+          VITE_API_URL: "https://portfolio-backend.onrender.com"
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 3: Deployment Status Summary (runs after both pass)
@@ -97,8 +97,8 @@ jobs:
           echo "✅ Frontend build passed"
           echo ""
           echo "🚀 Deployments triggered automatically:"
-          echo "   • Frontend → Vercel (via Git integration)"
-          echo "   • Backend  → Railway (via Git integration)"
+          echo "   • Frontend → Netlify (via Git integration)"
+          echo "   • Backend  → Render  (via Git integration)"
           echo ""
-          echo "🔗 Frontend: https://personal-portfolio-omega-tan.vercel.app"
-          echo "🔗 Backend:  https://personal-portfolio-production-752d.up.railway.app"
+          echo "🔗 Frontend: https://your-app.netlify.app"
+          echo "🔗 Backend:  https://portfolio-backend.onrender.com"

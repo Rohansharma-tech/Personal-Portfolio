@@ -42,8 +42,8 @@ if SENTRY_DSN:
     )
 
 _allowed_hosts = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
-# Always include Railway internal hosts (required even when ALLOWED_HOSTS env var is set)
-ALLOWED_HOSTS = _allowed_hosts + ['.railway.app', 'healthcheck.railway.app']
+# Always include Render internal hosts (required even when ALLOWED_HOSTS env var is set)
+ALLOWED_HOSTS = _allowed_hosts + ['.onrender.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -206,14 +206,14 @@ _allowed_origins = [
 ]
 CORS_ALLOWED_ORIGINS = _allowed_origins
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://personal-portfolio.*\.vercel\.app$",
+    r"^https://.*\.netlify\.app$",   # all Netlify preview & production deploys
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # allow all in dev
 
-# CSRF must also trust the frontend origin in production (allowing subdomains for Vercel previews)
+# CSRF must also trust the frontend origin in production (allowing subdomains for Netlify previews)
 CSRF_TRUSTED_ORIGINS = _allowed_origins + [
-    'https://*.vercel.app',
+    'https://*.netlify.app',
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
